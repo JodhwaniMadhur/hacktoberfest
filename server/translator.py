@@ -1,7 +1,4 @@
-from multiprocessing.connection import wait
-from time import sleep
 import pandas as pd
-from google.cloud import translate
 from os import environ
 
 
@@ -12,11 +9,13 @@ parent = f"projects/{project_id}"
 
 def translate_csv(file_path,language):
     '''
-    Description: Translate the file from one language to another
+    Author: Madhur Jodhwani
+    Date of creation: 08/08/2022
+    Date of last modification: 10/08/2022
+    Description: Process the CSV - Translate it's contents from one language to another - Convert to DataFrame
     Input: file_path - path of the file to be translated
         language - language to be translated to
-    
-    Output: Translated file
+    Output: Translated Dataframe
     '''
     from google.cloud import translate
     client = translate.TranslationServiceClient()

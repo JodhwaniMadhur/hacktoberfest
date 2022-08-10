@@ -2,10 +2,6 @@ import os,io, requests
 from flask import Flask, jsonify, request, send_from_directory
 from translator import translate_csv
 from s3 import AWSS3
-from multiprocessing import Process
-
-
-
 
 aws_access_key_id = os.environ['AWS_ACCESS_KEY_ID']
 aws_secret_access_key = os.environ['AWS_SECRET_ACCESS_KEY']
@@ -13,11 +9,19 @@ region_name = "ap-south-1"
 bucket_name = "translated-files-from-heroku"
 aws_s3 = AWSS3(aws_access_key_id, aws_secret_access_key, region_name)
 
-
 app = Flask(__name__)
 
 @app.route('/translate',methods=["POST","GET"])
 def api_upload():
+    '''
+    Author: Madhur Jodhwani
+    Date of creation: 08/08/2022
+    Date of last modification: 10/08/2022
+    Function name: api_upload
+    Description: Processes the request from client - Reads headers and data - Uploads it's data to the s3 bucket
+    Input: None
+    Output: None
+    '''
     file_name = request.headers.get('file_name')
     request.files['file'].save(f'{file_name}')
     file_size = os.path.getsize(f'{file_name}')
@@ -28,6 +32,15 @@ def api_upload():
 
 @app.route('/download-translated-csv',methods=["POST","GET"])
 def api_call_translate():
+    '''
+    Author: Madhur Jodhwani
+    Date of creation: 08/08/2022
+    Date of last modification: 10/08/2022
+    Function name: api_call_translate
+    Description: Processes the request from client - Reads the headers and data - Downloads the data from the s3 bucket - reads it and translates it -  converts it back to CSV
+    Input: None
+    Output: None
+    '''
     file_name = request.headers.get("file_name")
     language = request.headers.get("language")
     if not file_name:
@@ -46,6 +59,16 @@ def api_call_translate():
 
 @app.route('/download-previously-translated-csv',methods=["POST","GET"])
 def api_call_download_previously_translated():
+    '''
+    Author: Madhur Jodhwani
+    Date of creation: 08/08/2022
+    Date of last modification: 10/08/2022
+    Function name: api_call_download_previously_translated
+    Description: Processes the request from client - Reads the headers and data - Downloads the data from the s3 bucket - reads it and returns it.
+                    If already translated file not present then calls api_call_translate().
+    Input: None
+    Output: None
+    '''
     file_name = request.headers.get("file_name")
     language = request.headers.get("language")
     if not file_name:

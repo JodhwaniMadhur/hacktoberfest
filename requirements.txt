@@ -1,0 +1,6 @@
+requests==2.26.0
+requests-file==1.5.1
+boto3==1.24.47
+Flask==2.2.1
+googletrans==3.0.0
+pandas==1.3.5
