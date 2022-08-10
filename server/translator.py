@@ -1,18 +1,40 @@
+from multiprocessing.connection import wait
+from time import sleep
 import pandas as pd
 from google.cloud import translate
 from os import environ
-import six
 
-project_id = environ.get("PROJECT_ID", "")
+
+project_id = environ["PROJECT_ID"]
 assert project_id
 parent = f"projects/{project_id}"
 
-def translate(data,language):
+
+def translate_csv(file_path,language):
+    '''
+    Description: Translate the file from one language to another
+    Input: file_path - path of the file to be translated
+        language - language to be translated to
+    
+    Output: Translated file
+    '''
     from google.cloud import translate
-    from os import environ
     client = translate.TranslationServiceClient()
     target_language_code = language
-    response = client.translate_text(contents=[data],target_language_code=target_language_code,parent=parent,)
-    #translated_data.append(response.translations[0].translated_text)
-    return response.translations[0].translated_text
+    non_translated_file_data = pd.read_csv(file_path)
+    column_names = list(non_translated_file_data.columns)
+    non_translated_file_data = non_translated_file_data.values.tolist() #convert pandas dataframe to list
+    non_translated_file_data.insert(0,column_names)                     #adding column names to the top of the list
+    
+    delimited_file_data, translated_data = [],[]
+    for row in non_translated_file_data:
+        row = "-".join(list(map(str,row)))
+        delimited_file_data.append(row)
+    for i in delimited_file_data:
+        response = client.translate_text(contents=[i],target_language_code=target_language_code,parent=parent,)
+        translated_data.append(response.translations[0].translated_text.split("-"))
+    df = pd.DataFrame(translated_data, columns=translated_data.pop(0))
+    for i in translated_data:
+        df.append(i)
+    return df
 

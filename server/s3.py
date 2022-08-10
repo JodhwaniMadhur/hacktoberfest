@@ -29,6 +29,14 @@ class AWSS3:
         print(f"Bucket : {bucket_name}")
         for obj in bucket.objects.all():
             print(f'filename : {obj.key} ')
+        return bucket.objects.all()
+
+    def check_if_file_exists(self, bucket_name, file_name):
+        bucket = self.s3.Bucket(bucket_name)
+        for obj in bucket.objects.all():
+            if(file_name in obj.key):
+                return True
+        return False
 
     def delete_contents_s3_bucket(self,bucket_name,file_name ):
         self.s3.Object(bucket_name, file_name).delete()
