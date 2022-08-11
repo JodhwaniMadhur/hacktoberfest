@@ -1,4 +1,4 @@
-import pandas as pd
+
 from os import environ
 
 
@@ -18,6 +18,7 @@ def translate_csv(file_path,language):
     Output: Translated Dataframe
     '''
     from google.cloud import translate
+    import pandas as pd
     client = translate.TranslationServiceClient()
     target_language_code = language
     non_translated_file_data = pd.read_csv(file_path)
