@@ -101,7 +101,7 @@ Converting a whole CSV from one language to another using Google Translation API
 
 ## 🚀 Deployment on EC2 <a name = "deployment"></a>
 
-For an EC2 instance you need a AWS account. The Linux AMI EC2 instance with 1GB of space is what we need select and then run it 
+For an EC2 instance you need a AWS account. The Linux AMI EC2 instance with 1GB of space is what we need select and then run it. Steps to deploy server on EC2 => https://blog.devgenius.io/host-your-python-flask-on-aws-ec2-91735aa7127a
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
