@@ -1,15 +1,31 @@
-import os,io, requests
+import os, requests
 from flask import Flask, jsonify, request, send_from_directory
 from translator import translate_csv
 from s3 import AWSS3
+from flask_swagger_ui import get_swaggerui_blueprint
 
 aws_access_key_id = os.environ['AWS_ACCESS_KEY_ID']
 aws_secret_access_key = os.environ['AWS_SECRET_ACCESS_KEY']
-region_name = "ap-south-1"
-bucket_name = "translated-files-from-heroku"
+region_name = os.environ['REGION_NAME']
+bucket_name = os.environ['BUCKET_NAME']
+SWAGGER_JSON_URL = os.environ['SWAGGER_JSON_URL']
+SWAGGER_URL = '/swagger-ui'
+
 aws_s3 = AWSS3(aws_access_key_id, aws_secret_access_key, region_name)
 
 app = Flask(__name__)
+
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,  # Swagger UI static files will be mapped to '{SWAGGER_URL}/dist/'
+    SWAGGER_JSON_URL,
+    config={  # Swagger UI config overrides
+        'file_name': "File"
+    }
+)
+
+@app.route('/')
+def homepage():
+    return '''<h3>API running successfully!</h3>''',200
 
 @app.route('/translate',methods=["POST","GET"])
 def api_upload():
@@ -81,3 +97,5 @@ def api_call_download_previously_translated():
             return send_from_directory("./",f"{language}_{file_name}",as_attachment=True),200
         else:
             api_call_translate()
+
+app.register_blueprint(swaggerui_blueprint)

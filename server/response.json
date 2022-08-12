@@ -1,0 +1,182 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "description":"This is a CSV translator server.  You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).",
+      "version":"1.0.6",
+      "title":"Swagger CSV translator",
+      "termsOfService":"http://swagger.io/terms/",
+      "contact":{
+         "email":"apiteam@swagger.io"
+      },
+      "license":{
+         "name":"Apache 2.0",
+         "url":"http://www.apache.org/licenses/LICENSE-2.0.html"
+      }
+   },
+   "host":"127.0.0.1:5000",
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"/translate",
+         "description":""
+      },
+      {
+         "name":"/download-translated-csv",
+         "description":""
+      },
+      {
+         "name":"/download-previously-translated-csv",
+         "description":"",
+         "externalDocs":{
+            "description":"Find out more about our store",
+            "url":"http://swagger.io"
+         }
+      }
+   ],
+   "schemes":[
+      "http"
+   ],
+   "paths":{
+      "/translate":{
+         "post":{
+            "tags":[
+               "upload file"
+            ],
+            "summary":"uploads a CSV",
+            "description":"",
+            "operationId":"uploadFile",
+            "consumes":[
+               "multipart/form-data"
+            ],
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"file_name",
+                  "in":"header",
+                  "description":"file to upload",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"file",
+                  "in":"formData",
+                  "description":"file to upload",
+                  "required":true,
+                  "type":"file"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"successful operation"
+               },
+               "500":{
+                  "description":"internal server error"
+               }
+            },
+            "security":[
+               {
+                  "petstore_auth":[
+                     "write:pets",
+                     "read:pets"
+                  ]
+               }
+            ]
+         }
+      },
+      "/download-translated-csv":{
+         "post":{
+            "tags":[
+               "download file"
+            ],
+            "summary":"translate and download the csv",
+            "description":"Trnalsate and download a CSV to local computer",
+            "operationId":"placeOrder",
+            "consumes":[
+               "application/json"
+            ],
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "in":"header",
+                  "name":"file_name",
+                  "description":"file name for server",
+                  "required":true
+               },
+               {
+                  "in":"header",
+                  "name":"language",
+                  "description":"language to translate to",
+                  "required":true
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"successful operation"
+               },
+               "400":{
+                  "description":"Error"
+               },
+               "503":{
+                  "description":"Server is down"
+               }
+            }
+                  
+            }
+         }
+      ,
+      "/download-previously-translated-csv":{
+         "post":{
+            "tags":[
+               "download file"
+            ],
+            "summary":"translate and download the csv",
+            "description":"Download a previously translated CSV file from S3 bucket to local computer",
+            "operationId":"placeOrder",
+            "consumes":[
+               "application/json"
+            ],
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "in":"header",
+                  "name":"file_name",
+                  "description":"file name for server",
+                  "required":true
+                  
+               },
+               {
+                  "in":"header",
+                  "name":"language",
+                  "description":"language to translate to",
+                  "required":true
+                  
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"successful operation"
+               },
+               "400":{
+                  "description":"Error"
+               },
+               "503":{
+                  "description":"Server is down"
+               }
+            }
+                  
+            }
+         },
+   "securityDefinitions":{
+   },
+   "externalDocs":{
+      "description":"Find out more about Swagger",
+      "url":"http://swagger.io"
+   }
+}
+}
