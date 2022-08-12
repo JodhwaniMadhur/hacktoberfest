@@ -47,7 +47,10 @@ It is also stored on the server and is also returned as a repsonse to the client
 This API endpoint takes a ```file_name``` and a ```language``` as headers in the requets it recieves. Here we combine the language code and the file name recieved in the request headers and check if the file with the same name is present in the S3 bucket. If yes then we download it on the server and return it in the response. If not then we call the ```/download-translated-csv``` API which then checks for the original file and then translate it into the given language code and return it.
 
 PS: All three APIs accept POST and GET requests. 
+
 Currently the API is active on http://ec2-43-205-142-160.ap-south-1.compute.amazonaws.com:5000
+
+Swagger documentation => http://ec2-43-205-142-160.ap-south-1.compute.amazonaws.com:5000/swagger-ui
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
@@ -57,12 +60,15 @@ These instructions will get you a copy of the project up and running on your loc
 
 What things you need to install the software and how to install them.
 
+
 Since this project is built on a Python framework which is flask you need to install Python on your local machine.
 Python v3.9, pip and Git is required
 Links for installing each of these
 - www.python.org
 - https://pip.pypa.io/en/stable/installation/
 - https://www.atlassian.com/git/tutorials/install-git
+
+AWS S3 bucket and AWS EC2 Instance(Linux AMI) which has above 3 softwares installed.
 ```
 Steps to setup the project install pre requisites:
 
@@ -81,7 +87,14 @@ A step by step series of examples that tell you how to get a development env run
 After the requirements are installed we need to run a production server 
 ```
 cd server
-export GOOGLE_APPLICATION_CREDENTIALS="<Path to credentials JSON file>" && export PROJECT_ID="<GCP project name>" && export AWS_ACCESS_KEY_ID="<Access key ID for AWS and S3>" && export AWS_SECRET_ACCESS_KEY="<Secret Key for AWS access>";
+export GOOGLE_APPLICATION_CREDENTIALS="<Path to credentials JSON file>";
+export PROJECT_ID="<GCP project name>";
+export AWS_ACCESS_KEY_ID="<Access key ID for AWS and S3>";
+export AWS_SECRET_ACCESS_KEY="<Secret Key for AWS access>";
+export SWAGGER_JSON_URL="<Path to a JSON file which has Swagger config>";
+export BUCKET_NAME="<S3 bucket name">
+export REGION_NAME="<Region n which bucket is hosted>";
+
 
 //The AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are basically ID and Password for accessing AWS programmatically.
 
