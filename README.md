@@ -52,6 +52,8 @@ Currently the API is active on http://ec2-43-205-142-160.ap-south-1.compute.amaz
 
 Swagger documentation => http://ec2-43-205-142-160.ap-south-1.compute.amazonaws.com:5000/swagger-ui
 
+For Swagger UI, the config file i.e response.json is also added to the repository, it is hosted in the AWS bucket and it's URL needs to be set as an environment variable as shown below.
+
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
@@ -91,7 +93,7 @@ export GOOGLE_APPLICATION_CREDENTIALS="<Path to credentials JSON file>";
 export PROJECT_ID="<GCP project name>";
 export AWS_ACCESS_KEY_ID="<Access key ID for AWS and S3>";
 export AWS_SECRET_ACCESS_KEY="<Secret Key for AWS access>";
-export SWAGGER_JSON_URL="<Path to a JSON file which has Swagger config>";
+export SWAGGER_JSON_URL="<Path to a JSON file URL hosted on web which has Swagger config>";
 export BUCKET_NAME="<S3 bucket name">
 export REGION_NAME="<Region n which bucket is hosted>";
 
