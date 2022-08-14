@@ -49,7 +49,7 @@ def api_upload():
     print(file_name,file_size)
     aws_s3.push_data_to_s3_bucket(bucket_name,open(file_name,'rb'),file_name,file_size,"text/csv")
     os.remove(file_name)
-    return jsonify({ "status" : "success" }),200,response
+    return jsonify({ "status" : "success" }),200
 
 
 @app.route('/download-translated-csv',methods=["POST","GET"])
@@ -76,7 +76,7 @@ def api_call_translate():
             translated_data.to_csv(f"{language}_{file_name}",index=False)
             aws_s3.push_data_to_s3_bucket(bucket_name,open(f"{language}_{file_name}",'rb'),f"{language}_{file_name}",os.path.getsize(f"{language}_{file_name}"),"text/csv")
             return send_from_directory("./",f"{language}_{file_name}",as_attachment=True),200
-        return jsonify({ "status" : f"ERROR:{file_name} is not present in the database, please use the /translate api to reupload it." }),503,response
+        return jsonify({ "status" : f"ERROR:{file_name} is not present in the database, please use the /translate api to reupload it." }),503
 
 
 @app.route('/download-previously-translated-csv',methods=["POST","GET"])
@@ -100,7 +100,7 @@ def api_call_download_previously_translated():
         if(aws_s3.check_if_file_exists(bucket_name,f"{language}_{file_name}") == True):
             response = requests.get(f"https://{bucket_name}.s3.{region_name}.amazonaws.com/{language}_{file_name}")
             open(f"./{language}_{file_name}", "wb").write(response.content)
-            return send_from_directory("./",f"{language}_{file_name}",as_attachment=True),200,response
+            return send_from_directory("./",f"{language}_{file_name}",as_attachment=True),200
         else:
             api_call_translate()
 
