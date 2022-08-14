@@ -3,6 +3,7 @@ from flask import Flask, jsonify, request, send_from_directory
 from translator import translate_csv
 from s3 import AWSS3
 from flask_swagger_ui import get_swaggerui_blueprint
+from flask_cors import CORS
 
 aws_access_key_id = os.environ['AWS_ACCESS_KEY_ID']
 aws_secret_access_key = os.environ['AWS_SECRET_ACCESS_KEY']
@@ -14,6 +15,10 @@ SWAGGER_URL = '/swagger-ui'
 aws_s3 = AWSS3(aws_access_key_id, aws_secret_access_key, region_name)
 
 app = Flask(__name__)
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
+app.config['CORS_HEADERS'] = 'Content-Type'
+response=requests.Response
+response.headers={ 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods' : 'PUT,GET,POST' }
 
 swaggerui_blueprint = get_swaggerui_blueprint(
     SWAGGER_URL,  # Swagger UI static files will be mapped to '{SWAGGER_URL}/dist/'
@@ -41,9 +46,10 @@ def api_upload():
     file_name = request.headers.get('file_name')
     request.files['file'].save(f'{file_name}')
     file_size = os.path.getsize(f'{file_name}')
+    print(file_name,file_size)
     aws_s3.push_data_to_s3_bucket(bucket_name,open(file_name,'rb'),file_name,file_size,"text/csv")
     os.remove(file_name)
-    return jsonify({ "status" : "success" }),200
+    return jsonify({ "status" : "success" }),200,response
 
 
 @app.route('/download-translated-csv',methods=["POST","GET"])
@@ -70,7 +76,7 @@ def api_call_translate():
             translated_data.to_csv(f"{language}_{file_name}",index=False)
             aws_s3.push_data_to_s3_bucket(bucket_name,open(f"{language}_{file_name}",'rb'),f"{language}_{file_name}",os.path.getsize(f"{language}_{file_name}"),"text/csv")
             return send_from_directory("./",f"{language}_{file_name}",as_attachment=True),200
-        return jsonify({ "status" : f"ERROR:{file_name} is not present in the database, please use the /translate api to reupload it." }),503
+        return jsonify({ "status" : f"ERROR:{file_name} is not present in the database, please use the /translate api to reupload it." }),503,response
 
 
 @app.route('/download-previously-translated-csv',methods=["POST","GET"])
@@ -94,7 +100,7 @@ def api_call_download_previously_translated():
         if(aws_s3.check_if_file_exists(bucket_name,f"{language}_{file_name}") == True):
             response = requests.get(f"https://{bucket_name}.s3.{region_name}.amazonaws.com/{language}_{file_name}")
             open(f"./{language}_{file_name}", "wb").write(response.content)
-            return send_from_directory("./",f"{language}_{file_name}",as_attachment=True),200
+            return send_from_directory("./",f"{language}_{file_name}",as_attachment=True),200,response
         else:
             api_call_translate()
 
