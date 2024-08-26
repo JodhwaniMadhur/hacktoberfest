@@ -73,9 +73,24 @@ class AWSS3:
         '''
         bucket = self.s3.Bucket(bucket_name)
         for obj in bucket.objects.all():
-            if(file_name in obj.key):
-                return True
+            if(file_name == obj.key):return True
         return False
+    
+    def download_file_from_s3_bucket(self,bucket_name,file_name):
+        '''
+         Author: Madhur Jodhwani
+        Date of creation: 10/08/2022
+        Date of last modification: 10/08/2022
+        Function name: ownload_file_from_s3_bucket
+        Description: downloads the s3 bucket
+        Input: bucket_name - name of the bucket to check the file in
+            file_name - name of the file to check in the bucket
+        Output: True if file is downloaded else False
+        '''
+        
+        self.s3.Bucket(bucket_name).download_file(file_name, file_name)
+        return True
+        
 
     def delete_contents_s3_bucket(self,bucket_name,file_name ):
         '''
