@@ -3,6 +3,7 @@ from flask import Flask, jsonify, request, send_from_directory
 from translator import translate_csv
 from s3 import AWSS3
 
+MEDIA_DIR = "../media"
 aws_access_key_id = os.environ['AWS_ACCESS_KEY_ID']
 aws_secret_access_key = os.environ['AWS_SECRET_ACCESS_KEY']
 region_name = "ap-south-1"
@@ -10,6 +11,10 @@ bucket_name = "translated-files-from-heroku"
 aws_s3 = AWSS3(aws_access_key_id, aws_secret_access_key, region_name)
 
 app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return jsonify({ "status" : "success" }),200
 
 @app.route('/translate',methods=["POST","GET"])
 def api_upload():
@@ -48,8 +53,8 @@ def api_call_translate():
     else:
         #read the s3 bucket file here and translate it
         if(aws_s3.check_if_file_exists(bucket_name,file_name) == True):
-            response = requests.get(f"https://{bucket_name}.s3.{region_name}.amazonaws.com/{file_name}")
-            open(f"{file_name}", "wb").write(response.content)
+            if aws_s3.download_file_from_s3_bucket(bucket_name,file_name) == False:
+                return jsonify({ "status" : "error" }),503
             translated_data = translate_csv(f"./{file_name}",language)
             translated_data.to_csv(f"{language}_{file_name}",index=False)
             aws_s3.push_data_to_s3_bucket(bucket_name,open(f"{language}_{file_name}",'rb'),f"{language}_{file_name}",os.path.getsize(f"{language}_{file_name}"),"text/csv")
@@ -76,8 +81,7 @@ def api_call_download_previously_translated():
     else:
         #read the s3 bucket file here and translate it
         if(aws_s3.check_if_file_exists(bucket_name,f"{language}_{file_name}") == True):
-            response = requests.get(f"https://{bucket_name}.s3.{region_name}.amazonaws.com/{language}_{file_name}")
-            open(f"./{language}_{file_name}", "wb").write(response.content)
+            aws_s3.download_file_from_s3_bucket(bucket_name,f"{language}_{file_name}")
             return send_from_directory("./",f"{language}_{file_name}",as_attachment=True),200
         else:
             api_call_translate()
